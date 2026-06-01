@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cora AI | Mentora financeira</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css?v=24">
+</head>
+
+<body>
+  <section class="auth-screen" id="authScreen" translate="no">
+    <div class="auth-brand">
+      <img src="assets/img/cora-avatar.png" alt="Avatar da Cora">
+      <p class="eyebrow">Cora AI</p>
+      <h1>Financas pessoais com conversa, clareza e habito.</h1>
+      <p>Uma mentora financeira para jovens e estudantes planejarem metas, entenderem gastos e receberem orientacao
+        personalizada.</p>
+    </div>
+
+    <div class="auth-card">
+      <button class="auth-theme-toggle" id="authThemeToggle" type="button"
+        aria-label="Alternar modo claro ou escuro">☀️</button>
+      <label class="auth-language">
+        <span id="authLanguageLabel">Idioma</span>
+        <select id="authLanguageSelect">
+          <option value="pt-BR">Português</option>
+          <option value="en">English</option>
+        </select>
+      </label>
+      <div class="auth-tabs" role="tablist" aria-label="Acesso">
+        <button class="active" id="loginTab" type="button">Entrar</button>
+        <button id="signupTab" type="button">Criar conta</button>
+      </div>
+
+      <form class="auth-form" id="loginForm">
+        <h2>Entrar na Cora</h2>
+        <label for="loginEmail">E-mail</label>
+        <input id="loginEmail" type="email" autocomplete="email" required placeholder="voce@gmail.com">
+        <label for="loginPassword">Senha</label>
+        <input id="loginPassword" type="password" autocomplete="current-password" required placeholder="Sua senha">
+        <button type="submit">Entrar</button>
+        <p class="form-feedback" id="loginFeedback" role="status"></p>
+      </form>
+
+      <form class="auth-form hidden" id="signupForm">
+        <h2>Criar sua conta</h2>
+        <label for="signupName">Nome completo</label>
+        <input id="signupName" type="text" autocomplete="name" required placeholder="Ex.: Nome completo">
+        <label for="signupEmail">E-mail</label>
+        <input id="signupEmail" type="email" autocomplete="email" required placeholder="voce@gmail.com">
+        <label for="signupPassword">Senha</label>
+        <input id="signupPassword" type="password" autocomplete="new-password" required minlength="8"
+          placeholder="Minimo 8 caracteres, letra, numero e simbolo">
+        <label for="signupGender">Como a Cora deve se referir a voce?</label>
+        <select id="signupGender" required>
+          <option value="">Escolha uma opcao</option>
+          <option value="feminino">Ela/dela: vamos juntas</option>
+          <option value="masculino">Ele/dele: vamos juntos</option>
+          <option value="neutro">Neutro/elu: vamos juntes</option>
+        </select>
+        <label for="signupIncome">Renda bruta mensal</label>
+        <input id="signupIncome" type="text" inputmode="decimal" required placeholder="Ex.: 3000 ou 3.500,00">
+        <label for="signupPhoto">Foto de perfil (opcional)</label>
+        <input id="signupPhoto" type="file" accept="image/*">
+        <button type="submit">Criar conta</button>
+        <p class="form-feedback" id="signupFeedback" role="status"></p>
+      </form>
+    </div>
+  </section>
+
+  <div class="app-shell hidden" id="appShell">
+    <header class="app-topbar">
+      <div class="topbar-left">
+        <div class="logo" aria-label="Cora AI" onclick="window.location.reload();">
+          <span>Cora <span class="logo-ai">AI</span></span>
+        </div>
+      </div>
+
+      <div class="topbar-right">
+        <button class="icon-button compact icon-only-action" id="themeToggle" type="button" aria-pressed="false" aria-label="Alternar modo claro ou escuro" title="Alternar tema">☀</button>
+        <button class="icon-button compact icon-only-action" id="voiceButton" type="button" aria-label="Ouvir resumo" title="Ouvir resumo">🔊</button>
+        <div class="topbar-user" id="userMenuTrigger" aria-label="Conta logada">
+          <div class="user-avatar" id="topbarAvatar" aria-hidden="true">--</div>
+
+          <div>
+            <span>Conta logada</span>
+            <strong id="topbarUserName">Cliente</strong>
+          </div>
+
+                    <div class="user-dropdown" id="userDropdown">
+            <p class="dropdown-section-title">Conta</p>
+            <button type="button" class="dropdown-item" data-menu-target="perfil"><span>Editar Perfil</span></button>
+            <button type="button" class="dropdown-item" data-menu-target="seguranca"><span>Senha e seguranca</span></button>
+            <button type="button" class="dropdown-item" data-menu-target="renda"><span>Atualizar renda</span></button>
+            <button type="button" class="dropdown-item" data-menu-target="idioma"><span>Idioma</span><small id="menuLanguageLabel">Portugues</small></button>
+            <p class="dropdown-section-title">Cora</p>
+            <button type="button" class="dropdown-item" data-menu-target="sobre"><span>Sobre nos</span></button>
+            <button type="button" class="dropdown-item" data-menu-target="gastos"><span>Meus gastos</span></button>
+            <a class="dropdown-item" href="#chat"><span>Chat financeiro</span></a>
+            <a class="dropdown-item" href="#insights"><span>Insights sobre habitos</span></a>
+            <button class="dropdown-item logout" id="logoutButton" type="button"><span>Sair</span></button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Depois do login, a primeira tela precisa responder rapido: quem esta logado, quanto tem disponivel e onde conversar com a Cora. -->
+    <main class="main-content">
+      <!-- Abertura curta para apresentar a proposta da Cora. -->
+      <section class="intro-section home-hero">
+        <div>
+          <p class="eyebrow">Mentora financeira inteligente</p>
+          <h1 id="heroTitle">Como posso te ajudar hoje?</h1>
+          <p class="hero-copy" id="heroCopy">A Cora entende sua vida financeira, separa gastos essenciais dos ajustaveis
+            e cria metas reais com valor, prazo e clareza.</p>
+        </div>
+        <div class="value-pills" aria-label="Diferenciais da Cora">
+          <span>A Cora entende sua rotina</span>
+          <span>Diferencia gastos essenciais</span>
+          <span>Cria metas reais</span>
+          <span>Fala com voce de forma personalizada</span>
+        </div>
+        <div class="onboarding-card" id="onboardingCard">
+          <strong>Primeiros passos</strong>
+          <button type="button" data-menu-target="renda">1. Confirmar renda</button>
+          <button type="button" data-menu-target="gastos">2. Cadastrar gastos</button>
+          <button type="button" data-prompt="Quero criar uma meta financeira">3. Criar primeira meta</button>
+        </div>
+      </section>
+
+      <!-- Diagnostico principal: score, termometro e simulacao antes da conversa. -->
+      <section class="score-dashboard" aria-label="Diagnostico financeiro da Cora">
+        <article class="score-card" id="coraScoreCard">
+          <div class="card-heading">
+            <p class="eyebrow">Cora Score</p>
+            <span id="scoreStatusPill">Saudavel</span>
+          </div>
+          <div class="score-ring" id="scoreRing" aria-label="Cora Score">
+            <strong id="coraScoreValue">100</strong>
+            <small>/100</small>
+          </div>
+          <h2 id="coraScoreStatus">Saudavel</h2>
+          <p id="coraScoreText">Cora Score e uma estimativa educativa criada pela Cora para ajudar voce a entender seus habitos financeiros.</p>
+          <div class="score-actions">
+            <button class="ghost-action compact-action" type="button" id="scoreExplainButton">Entenda como funciona</button>
+            <button class="ghost-action compact-action" type="button" id="exportSummaryButton">Exportar resumo</button>
+          </div>
+        </article>
+
+        <article class="thermometer-card">
+          <div class="card-heading">
+            <p class="eyebrow">Termometro financeiro</p>
+            <span id="commitmentPill">0%</span>
+          </div>
+          <div class="thermo-track">
+            <span class="thermo-fill" id="thermoFill"></span>
+            <span class="thermo-marker" id="thermoMarker"></span>
+          </div>
+          <div class="thermo-stats">
+            <div>
+              <strong id="essentialPercent">0%</strong>
+              <span>Essenciais</span>
+              <small id="essentialAmount">R$ 0</small>
+            </div>
+            <div>
+              <strong id="flexiblePercent">0%</strong>
+              <span>Flexiveis</span>
+              <small id="flexibleAmount">R$ 0</small>
+            </div>
+            <div>
+              <strong id="optionalPercent">0%</strong>
+              <span>Opcionais</span>
+              <small id="optionalAmount">R$ 0</small>
+            </div>
+          </div>
+          <p id="thermoInsight">Cadastre renda e gastos para a Cora medir sua margem mensal.</p>
+        </article>
+
+        <article class="buy-card">
+          <div class="card-heading">
+            <p class="eyebrow">Posso comprar isso?</p>
+            <span id="buyDecisionPill">Simulador</span>
+          </div>
+          <label>
+            Produto ou desejo
+            <input id="buyItemInput" type="text" placeholder="Ex.: PS5, notebook, celular">
+          </label>
+          <label>
+            Preco
+            <input id="buyPriceInput" type="text" inputmode="decimal" placeholder="Ex.: 3500 ou 3.500,00">
+          </label>
+          <button class="primary-button" id="buyCheckButton" type="button">Analisar compra</button>
+          <p id="buyResult">Informe um valor para a Cora comparar com sua sobra mensal.</p>
+          <button class="ghost-action compact-action" id="saveSimulationButton" type="button">Salvar simulacao</button>
+          <div class="simulation-list" id="simulationList" aria-label="Simulacoes recentes"></div>
+        </article>
+
+        <article class="metric-card compact-metric goal-overview">
+          <span>Meta ativa</span>
+          <strong id="goalMetric">Nenhuma</strong>
+          <p id="goalHint">Conte uma meta para a Cora calcular.</p>
+          <div class="goal-progress">
+            <span id="goalProgressFill"></span>
+          </div>
+          <div class="goal-progress-meta" id="goalProgressMeta">Sem meta ativa</div>
+        </article>
+      </section>
+
+      <!-- Na home ficam as conclusoes. A edicao detalhada esta no menu para nao pesar a primeira tela. -->
+      <section class="insight-summary-panel" id="insights">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Insights sobre habitos</p>
+            <h2>O que a Cora ja percebeu</h2>
+          </div>
+          <button class="ghost-action" type="button" data-menu-target="gastos">Ver detalhes dos gastos</button>
+        </div>
+
+        <div class="insight-card-grid">
+          <article class="insight-mini-card">
+            <span>Maior gasto essencial</span>
+            <strong id="essentialInsightTitle">Ainda nao informado</strong>
+            <p id="essentialInsightText">Cadastre gastos como aluguel, agua, luz ou mercado para a Cora diferenciar o
+              que nao deve ser cortado.</p>
+          </article>
+          <article class="insight-mini-card">
+            <span>Maior gasto ajustavel</span>
+            <strong id="adjustableInsightTitle">Ainda nao informado</strong>
+            <p id="adjustableInsightText">Gastos flexiveis e opcionais aparecem aqui para orientar escolhas sem mexer no
+              essencial.</p>
+          </article>
+        </div>
+      </section>
+
+      <!-- O chat continua como diferencial, agora apoiado pelo diagnostico financeiro acima. -->
+      <section class="dashboard-grid premium-dashboard">
+        <article class="hero-panel chat-focus" id="chat">
+          <div class="chat-header">
+            <div>
+              <p class="eyebrow">Chat financeiro inteligente</p>
+              <h2>Como posso te ajudar hoje?</h2>
+            </div>
+            <button class="status-pill history-button" id="historyButton" type="button">historico salvo</button>
+          </div>
+
+          <div class="chat-window" id="chatWindow" aria-live="polite"></div>
+
+          <div class="quick-actions" aria-label="Sugestoes de conversa">
+            <button type="button" data-prompt="Quero criar uma meta financeira">Criar meta</button>
+            <button type="button" data-prompt="Analise meus gastos e me diga o que posso ajustar">Analisar
+              gastos</button>
+            <button type="button" data-prompt="Me explique juros do cartao de forma simples">Explicar cartao</button>
+          </div>
+
+          <form class="chat-form" id="chatForm">
+            <label class="sr-only" for="chatInput">Mensagem para a Cora</label>
+            <input id="chatInput" type="text" autocomplete="off"
+              placeholder="Ex.: quero comprar um celular de R$ 2.800 em 6 meses">
+            <button type="submit">Enviar</button>
+          </form>
+        </article>
+      </section>
+
+      <!-- Telas de conta abertas pelo menu lateral. Manter escondidas para preservar a home limpa. -->
+      <section class="content-grid settings-grid">
+        <article class="spending-panel settings-page" id="gastos" aria-hidden="true">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Meus gastos</p>
+              <h2>Categorias e valores mensais</h2>
+            </div>
+            <button class="settings-close" type="button" data-close-settings>Voltar</button>
+          </div>
+
+          <p class="settings-help">Edite, adicione ou remova categorias. Marque cada uma como essencial, flexivel ou
+            opcional para a Cora nao sugerir cortes irreais.</p>
+
+          <div class="category-list" id="categoryList" aria-label="Categorias de gastos"></div>
+
+          <form class="category-form" id="addCategoryForm">
+            <label>
+              Nova categoria
+              <input id="newCategoryName" type="text" maxlength="28" placeholder="Ex.: Aluguel, mercado, academia">
+            </label>
+            <label>
+              Valor mensal
+              <input id="newCategoryValue" type="text" inputmode="decimal" placeholder="Ex.: 900 ou 299,90">
+            </label>
+            <label>
+              Tipo de gasto
+              <select id="newCategoryType">
+                <option value="essential">Essencial</option>
+                <option value="flexible">Flexivel</option>
+                <option value="optional">Opcional</option>
+              </select>
+            </label>
+            <button type="submit">Adicionar categoria</button>
+          </form>
+
+          <div class="bar-list" id="barList"></div>
+          <p class="insight-text" id="insightText">Preencha seus gastos para a Cora encontrar oportunidades de economia.
+          </p>
+        </article>
+
+        <article class="account-panel settings-page" id="perfil" aria-hidden="true">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Editar perfil</p>
+              <h2>Dados da conta</h2>
+            </div>
+            <button class="settings-close" type="button" data-close-settings>Voltar</button>
+          </div>
+
+          <form class="profile-form" id="profileForm">
+            <div class="profile-photo-editor">
+              <div class="user-avatar large" id="profilePreview">--</div>
+              <div class="photo-actions">
+                <button class="file-button" id="addPhotoButton" type="button">Adicionar foto</button>
+                <input id="editPhotoInput" class="sr-only" type="file" accept="image/*">
+                <button class="secondary-button" id="removePhotoButton" type="button">Remover foto</button>
+              </div>
+            </div>
+
+            <label>
+              Nome
+              <input id="editName" type="text" autocomplete="name">
+            </label>
+            <label>
+              E-mail
+              <input id="editEmail" type="email" autocomplete="email">
+            </label>
+            <label>
+              Como a Cora deve falar com voce?
+              <select id="editGender">
+                <option value="feminino">Ela/dela: vamos juntas</option>
+                <option value="masculino">Ele/dele: vamos juntos</option>
+                <option value="neutro">Neutro/elu: vamos juntes</option>
+              </select>
+            </label>
+            <button type="submit">Salvar perfil</button>
+            <p class="form-feedback" id="profileFeedback" role="status"></p>
+          </form>
+        </article>
+
+
+        <article class="account-panel settings-page" id="seguranca" aria-hidden="true">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Senha e seguranca</p>
+              <h2>Alterar senha</h2>
+            </div>
+            <button class="settings-close" type="button" data-close-settings>Voltar</button>
+          </div>
+          <form class="security-form" id="securityForm">
+            <label>
+              Nova senha
+              <input id="securityPassword" type="password" autocomplete="new-password" minlength="8"
+                placeholder="Minimo 8 caracteres, letra, numero e simbolo">
+            </label>
+            <label>
+              Confirmar nova senha
+              <input id="securityPasswordConfirm" type="password" autocomplete="new-password" minlength="8"
+                placeholder="Repita a senha">
+            </label>
+            <button type="submit">Atualizar senha</button>
+            <p class="form-feedback" id="securityFeedback" role="status"></p>
+          </form>
+        </article>
+
+        <article class="account-panel settings-page" id="idioma" aria-hidden="true">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Idioma</p>
+              <h2>Escolher idioma</h2>
+            </div>
+            <button class="settings-close" type="button" data-close-settings>Voltar</button>
+          </div>
+          <form class="language-form" id="languageForm">
+            <label>
+              Idioma da interface
+              <select id="languageSelect"></select>
+            </label>
+            <button type="submit">Salvar idioma</button>
+            <p class="form-feedback" id="languageFeedback" role="status"></p>
+          </form>
+        </article>
+
+        <article class="account-panel settings-page" id="sobre" aria-hidden="true">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Sobre nos</p>
+              <h2>Cora AI</h2>
+            </div>
+            <button class="settings-close" type="button" data-close-settings>Voltar</button>
+          </div>
+          <div class="about-grid">
+            <article class="about-card">
+              <span data-about-title="aboutProblemTitle">Problema</span>
+              <p data-about-text="aboutProblemText">Jovens e estudantes costumam lidar com dinheiro por impulso, sem linguagem simples, sem plano e sem clareza sobre o que realmente pode ser ajustado.</p>
+            </article>
+            <article class="about-card">
+              <span data-about-title="aboutSolutionTitle">Solucao</span>
+              <p data-about-text="aboutSolutionText">A Cora transforma conversa em planejamento: entende renda, gastos, metas e cria orientacoes praticas sem economes.</p>
+            </article>
+            <article class="about-card">
+              <span data-about-title="aboutDifferenceTitle">Diferencial</span>
+              <p data-about-text="aboutDifferenceText">Ela separa gastos essenciais de gastos ajustaveis, evita sugestoes irreais e fala com cada pessoa de forma personalizada.</p>
+            </article>
+            <article class="about-card">
+              <span data-about-title="aboutAudienceTitle">Publico-alvo</span>
+              <p data-about-text="aboutAudienceText">Criada para jovens, estudantes, estagiarios e pessoas no inicio da vida financeira que precisam de autonomia com acolhimento.</p>
+            </article>
+            <article class="about-card">
+              <span data-about-title="aboutAccessibilityTitle">Acessibilidade</span>
+              <p data-about-text="aboutAccessibilityText">Modo claro e escuro, contraste forte, leitura por voz, linguagem direta e fluxos simples para reduzir atrito.</p>
+            </article>
+            <article class="about-card">
+              <span data-about-title="aboutNextTitle">Proximos passos</span>
+              <p data-about-text="aboutNextText">Conectar Open Finance, alertas inteligentes, metas compartilhadas, educacao gamificada e uma IA financeira com dados reais em tempo seguro.</p>
+            </article>
+          </div>
+        </article>
+        <article class="income-panel settings-page" id="renda" aria-hidden="true">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Atualizar renda</p>
+              <h2>Renda bruta mensal</h2>
+            </div>
+            <button class="settings-close" type="button" data-close-settings>Voltar</button>
+          </div>
+          <form class="income-form" id="incomeForm">
+            <div class="current-income">
+              <span>Renda atual</span>
+              <strong id="currentIncomeValue">R$ 0,00</strong>
+            </div>
+            <label>
+              Nova renda
+              <input id="newIncomeInput" type="text" inputmode="decimal" placeholder="Ex.: 4200 ou 4.200,00">
+            </label>
+            <button type="submit" id="incomeUpdateButton">Atualizar</button>
+            <p class="form-feedback" id="incomeFeedback" role="status"></p>
+          </form>
+        </article>
+      </section>
+    </main>
+  </div>
+  <section class="history-modal hidden" id="historyModal" aria-modal="true" aria-labelledby="historyTitle"
+    role="dialog">
+    <div class="history-card">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Historico salvo</p>
+          <h2 id="historyTitle">Conversas por data</h2>
+        </div>
+        <button class="settings-close" id="historyClose" type="button">Fechar</button>
+      </div>
+      <div class="history-layout">
+        <div class="history-list" id="historyList"></div>
+        <div class="history-messages" id="historyMessages"></div>
+      </div>
+    </div>
+  </section>
+  <section class="history-modal hidden" id="scoreModal" aria-modal="true" aria-labelledby="scoreModalTitle"
+    role="dialog">
+    <div class="history-card score-modal-card">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Cora Score</p>
+          <h2 id="scoreModalTitle">Como a nota e calculada</h2>
+        </div>
+        <button class="settings-close" id="scoreModalClose" type="button">Fechar</button>
+      </div>
+      <div class="score-rules" id="scoreRules"></div>
+    </div>
+  </section>
+  <script>
+    window.addEventListener('DOMContentLoaded', function () {
+      var loginTab = document.getElementById('loginTab');
+      var signupTab = document.getElementById('signupTab');
+      var loginForm = document.getElementById('loginForm');
+      var signupForm = document.getElementById('signupForm');
+      function showSignup() {
+        if (loginTab) loginTab.classList.remove('active');
+        if (signupTab) signupTab.classList.add('active');
+        if (loginForm) loginForm.classList.add('hidden');
+        if (signupForm) signupForm.classList.remove('hidden');
+      }
+      function showLogin() {
+        if (loginTab) loginTab.classList.add('active');
+        if (signupTab) signupTab.classList.remove('active');
+        if (loginForm) loginForm.classList.remove('hidden');
+        if (signupForm) signupForm.classList.add('hidden');
+      }
+      if (signupTab) signupTab.addEventListener('click', showSignup);
+      if (loginTab) loginTab.addEventListener('click', showLogin);
+    });
+  </script>
+  <script defer src="assets/js/script.js?v=24"></script>
+</body>
+
+</html>
